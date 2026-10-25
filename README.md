@@ -4,6 +4,41 @@
 
 ---
 
+## Checkpoint 6 — Actividad 2 resuelta
+
+Los tres notebooks conservan sus preguntas y contienen código ejecutado, respuestas y salidas guardadas. Se verificaron dos veces, en orden **1 → 2 → 3**, con un kernel nuevo para cada cuaderno.
+
+| Cuaderno | Celdas de código ejecutadas | Figuras guardadas |
+| :--- | ---: | ---: |
+| `1_limpieza_de_datos.ipynb` | 36 | 0 |
+| `2_eda_imdb.ipynb` | 25 | 4 |
+| `3_ejercicios_pandas_delitos.ipynb` | 8 | 3 |
+
+El ETL regenera `data/delitos.csv` con **145,920 filas**, 32 entidades y 40 tipos de delito, de **enero de 2015 a junio de 2024**. Conserva los **18,694,886 registros** sumados en el CSV original. Los meses sin reporte de julio-diciembre de 2024 se excluyen: no se interpretan como ceros. Los tres CSV de entrada se conservan sin cambios.
+
+Las respuestas que requieren **homicidio doloso** o **robo de vehículo automotor** recuperan el subtipo desde `datos_delitos.csv`, porque el archivo agregado no lo conserva. En Colima hubo **617** registros de homicidio doloso en 2018; a nivel nacional hubo **187,661** registros de robo de vehículo automotor en 2019. No puede identificarse el municipio con más feminicidios con estos archivos estatales; el cuaderno lo explica y muestra, como complemento, el máximo estatal. Las tasas usan población de referencia de **2015** y distinguen el acumulado anual de una proyección mensual multiplicada por 12.
+
+En IMDB se resuelven los 25 puntos: quedan **838 de 1,000 películas** después de `dropna()`, con una media de `Rating` de **6.814319809069212**. Se documenta la limitación de analizar sólo casos completos.
+
+La auditoría del denominador detectó cinco poblaciones desalineadas en el archivo del profesor: Coahuila, Colima, Chiapas, Chihuahua y Ciudad de México. El cuaderno 3 muestra los valores originales y corrige su asociación **sólo en memoria**, con la tabla de [INEGI, Encuesta Intercensal 2015, p. 4](https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/nueva_estruc/702825078966.pdf#page=14). El CSV original se conserva íntegro.
+
+### Reproducir en Windows / PowerShell
+
+Con Python 3.12 disponible, desde la raíz del repositorio:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m ipykernel install --sys-prefix --name checkpoint6 --display-name "Python 3 (Checkpoint 6)"
+.\.venv\Scripts\jupyter.exe nbconvert --to notebook --execute --inplace --ExecutePreprocessor.kernel_name=checkpoint6 1_limpieza_de_datos.ipynb
+.\.venv\Scripts\jupyter.exe nbconvert --to notebook --execute --inplace --ExecutePreprocessor.kernel_name=checkpoint6 2_eda_imdb.ipynb
+.\.venv\Scripts\jupyter.exe nbconvert --to notebook --execute --inplace --ExecutePreprocessor.kernel_name=checkpoint6 3_ejercicios_pandas_delitos.ipynb
+```
+
+Entorno verificado: Python **3.12.14**, Pandas **2.3.3**, NumPy **2.2.6**, Matplotlib **3.10.7**, Seaborn **0.13.2**, JupyterLab **4.5.7** y Chardet **5.2.0**, sin cambiar las versiones de `requirements.txt`. El entorno virtual y los archivos temporales están excluidos por `.gitignore`.
+
+---
+
 ## 🛠️ Tecnologías y Librerías
 
 El análisis está construido sobre un stack moderno y eficiente de ciencia de datos en Python:
@@ -76,7 +111,7 @@ Estudio detallado del comportamiento de la industria del cine basándose en las 
 Aplicación de consultas complejas y análisis estadísticos avanzados sobre los datos de delincuencia en México previamente procesados.
 * **Series de Tiempo Multiestado:** Creación de un gráfico dinámico de series temporales de delincuencia para 3 estados de interés seleccionados (periodo de 2015-01 a 2019-07).
 * **Resolución de Interrogantes de Negocio:**
-  1. Homicidios totales registrados en una entidad específica (e.g., Colima) durante un año específico.
+  1. Homicidios dolosos registrados en Colima durante 2018, recuperando el subtipo del CSV original.
   2. Robos de vehículos automotores a nivel nacional.
   3. Suma combinada de delitos de alto impacto (homicidios y feminicidios) por año en toda la República.
   4. Entidad y mes con el máximo histórico de registros para delitos específicos (e.g., feminicidios).
@@ -90,7 +125,7 @@ Aplicación de consultas complejas y análisis estadísticos avanzados sobre los
 ### `data/delitos.csv` (Procesado)
 | Columna | Tipo de Dato | Descripción |
 | :--- | :--- | :--- |
-| `anio` | Entero | Año del registro del delito (2015 - presente) |
+| `anio` | Entero | Año del registro del delito (2015-junio de 2024 en los archivos incluidos) |
 | `clave_ent` | Entero | Clave oficial de la entidad federativa según el INEGI |
 | `entidad` | Texto | Nombre del estado de la República Mexicana |
 | `tipo_de_delito` | Texto | Categoría principal del delito (e.g., Homicidio, Robo, Secuestro) |
